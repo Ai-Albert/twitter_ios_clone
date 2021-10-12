@@ -20,6 +20,8 @@ class HomeTableViewController: UITableViewController {
         loadTweets()
         tweetsRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
         tableView.refreshControl = tweetsRefreshControl
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 150
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -27,7 +29,8 @@ class HomeTableViewController: UITableViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        navigationController?.navigationBar.barStyle = .black
+        super.viewDidAppear(animated)
+        self.loadTweets()
     }
     
     // Tweet loading stuff
@@ -44,7 +47,7 @@ class HomeTableViewController: UITableViewController {
             self.tableView.reloadData()
             self.tweetsRefreshControl.endRefreshing()
         }, failure: { (Error) in
-            print("Could not retrieve teets")
+            print("Could not retrieve tweets")
         })
     }
     
@@ -65,7 +68,7 @@ class HomeTableViewController: UITableViewController {
             }
             self.tableView.reloadData()
         }, failure: { (Error) in
-            print("Could not retrieve teets")
+            print("Could not retrieve tweets")
         })
     }
     
@@ -89,6 +92,10 @@ class HomeTableViewController: UITableViewController {
         if let imageData = data {
             cell.profileImageView.image = UIImage(data: imageData)
         }
+        
+        cell.setFavorite(tweetsArray[indexPath.row]["favorited"] as! Bool)
+        cell.setRetweeted(tweetsArray[indexPath.row]["retweeted"] as! Bool)
+        cell.tweetId = tweetsArray[indexPath.row]["id"] as! Int
         
         return cell
     }
